@@ -15,8 +15,8 @@ def drawing_background():
     scaled_background = pygame.transform.scale(background, (screen_width, screen_height))
     screen.blit(scaled_background, (0, 0))
 
-maincharacter = Fighter(200, 310)
-enemy = Fighter(700, 310)
+firstfighter = Fighter(200, 310)
+secondfighter = Fighter(700, 310)
 
 
 
@@ -24,6 +24,11 @@ enemy = Fighter(700, 310)
 action = True
 while action:
     drawing_background()
+    firstfighter.moving()
+    secondfighter.moving()
+    firstfighter.draw(screen)
+    secondfighter.draw(screen)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             action = False
