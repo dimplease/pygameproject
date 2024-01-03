@@ -18,6 +18,13 @@ def drawing_background():
     scaled_background = pygame.transform.scale(background, (screen_width, screen_height))
     screen.blit(scaled_background, (0, 0))
 
+
+def xp_bar(xp, x, y):
+    ratio = xp / 100
+    pygame.draw.rect(screen, (255, 0, 0), (x, y, 400, 30))
+    pygame.draw.rect(screen, (255, 255, 0), (x, y, 400 * ratio, 30))
+
+
 firstfighter = Fighter(200, 310)
 secondfighter = Fighter(700, 310)
 
@@ -28,7 +35,10 @@ action = True
 while action:
     clock.tick(60)
     drawing_background()
-    firstfighter.moving()
+    xp_bar(firstfighter.xp, 20, 20)
+    xp_bar(secondfighter.xp, 580, 20)
+
+    firstfighter.moving(screen, secondfighter)
     #secondfighter.moving()
     firstfighter.draw(screen)
     secondfighter.draw(screen)
