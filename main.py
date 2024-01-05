@@ -1,7 +1,14 @@
 import pygame
 
 class Fighter():
-    def __init__(self, x, y):
+    def __init__(self, x, y, data, sprite, steps):
+        self.size = data[0]
+        self.imagescale = data[1]
+        self.offset = data[2]
+        self.animationlist = self.images(sprite, steps)
+        self.action = 0
+        self.frame = 0
+        self.image = self.animationlist[self.action][self.frame]
         self.flip = False
         self.rect = pygame.Rect((x, y, 80, 180))
         self.yspeed = 0
@@ -10,8 +17,20 @@ class Fighter():
         self.attacking = False
         self.xp = 100
 
+    def images(self, sprite, steps):
+        animationlist = []
+        for y, animation in enumerate(steps):
+            temp_img = []
+            for i in range(animation):
+                temp = sprite.subsurface(i * self.size, y * self.size, self.size, self.size)
+                temp_img.append(pygame.transform.scale(temp, (self.size * self.imagescale, self.size * self.imagescale)))
+            animationlist.append(temp_img)
+        return animationlist
+
     def draw(self, surface):
+        img = pygame.transform.flip(self.image, self.flip, False)
         pygame.draw.rect(surface, (0, 255, 0), self.rect)
+        surface.blit(img, (self.rect.x - (self.offset[0] * self.imagescale), self.rect.y - - (self.offset[1] * self.imagescale)))
 
     def attack(self, surface, target):
         self.attacking = True
