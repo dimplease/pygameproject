@@ -13,7 +13,7 @@ clock = pygame.time.Clock()
 
 codysize = 110
 codyscale = 2
-codyoffset = [35, -5]
+codyoffset = [35, -15]
 codydata = [codysize, codyscale, codyoffset]
 shadowsize = 95
 shadowscale = 2
@@ -38,8 +38,8 @@ def xp_bar(xp, x, y):
     pygame.draw.rect(screen, (255, 255, 0), (x, y, 400 * ratio, 30))
 
 
-firstfighter = Fighter(200, 310, codydata, cody_sheet, codysteps)
-secondfighter = Fighter(700, 310, shadowdata, shadow_sheet, shadowsteps)
+firstfighter = Fighter(200, 310, False, codydata, cody_sheet, codysteps)
+secondfighter = Fighter(700, 310, True, shadowdata, shadow_sheet, shadowsteps)
 
 
 
@@ -53,6 +53,8 @@ while action:
 
     firstfighter.moving(screen, secondfighter)
     #secondfighter.moving()
+    firstfighter.updating()
+    secondfighter.updating()
     firstfighter.draw(screen)
     secondfighter.draw(screen)
 
