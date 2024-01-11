@@ -1,7 +1,8 @@
 import pygame
 
 class Fighter():
-    def __init__(self, x, y, flip, data, sprite, steps):
+    def __init__(self, player, x, y, flip, data, sprite, steps):
+        self.player = player
         self.size = data[0]
         self.imagescale = data[1]
         self.offset = data[2]
@@ -13,11 +14,13 @@ class Fighter():
         self.flip = flip
         self.rect = pygame.Rect((x, y, 80, 180))
         self.yspeed = 0
+        self.attackingcooldown = 0
         self.jumppossibility = False
         self.attackoption = 0
         self.attacking = False
         self.xp = 100
         self.running = False
+        self.alive = True
 
     def images(self, sprite, steps):
         animationlist = []
@@ -32,17 +35,21 @@ class Fighter():
     def draw(self, surface):
         img = pygame.transform.flip(self.image, self.flip, False)
         pygame.draw.rect(surface, (0, 255, 0), self.rect)
-        surface.blit(img, (self.rect.x - (self.offset[0] * self.imagescale), self.rect.y - - (self.offset[1] * self.imagescale)))
+        surface.blit(img, (self.rect.x - (self.offset[0] * self.imagescale), self.rect.y - (self.offset[1] * self.imagescale)))
 
     def attack(self, surface, target):
-        self.attacking = False
-        attackingrect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, 2 * self.rect.width, self.rect.height)
-        pygame.draw.rect(surface, (255, 0, 0), attackingrect)
-        if attackingrect.colliderect(target.rect):
-            target.xp -= 1
-
+        if self.attackingcooldown == 0:
+            self.attacking = False
+            attackingrect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, 2 * self.rect.width, self.rect.height)
+            if attackingrect.colliderect(target.rect):
+                target.xp -= 1
+            pygame.draw.rect(surface, (255, 0, 0), attackingrect)
     def updating(self):
-        if self.attacking is True:
+        if self.xp <= 0:
+            self.health = 0
+            self.update_action(3)
+            self.alive = False
+        elif self.attacking is True:
             if self.attackingtype == 1:
                 self.update_action(3)
         elif self.jumppossibility == True:
@@ -51,17 +58,21 @@ class Fighter():
             self.update_action(1)
         else:
             self.update_action(0)
-        animationcooldown = 500
+        animationcooldown = 200
         self.image = self.animationlist[self.action][self.frame]
         if pygame.time.get_ticks() - self.update > animationcooldown:
             self.frame += 1
             self.update = pygame.time.get_ticks()
         if self.frame >= len(self.animationlist[self.action]):
             self.frame = 0
-            if self.action == 3:
-                self.attacking = False
+            if self.alive == False:
+                self.frame = len(self.animationlist[self.action]) - 1
+            else:
+                if self.action == 3:
+                    self.attacking = False
+                    self.attackingcooldown = 50
 
-    def moving(self, surface, target):
+    def moving(self, surface, target, gameover):
         speed = 8
         xcoor = 0
         ycoor = 0
@@ -70,22 +81,39 @@ class Fighter():
         self.attackingtype = 0
         key = pygame.key.get_pressed()
 
-        if self.attacking is False:
-            if key[pygame.K_LEFT]:
-                xcoor = -speed
+        if self.attacking is False and self.alive is True and gameover is False:
+            if self.player == 1:
+                if key[pygame.K_LEFT]:
+                    xcoor = -speed
                 self.running = True
-            if key[pygame.K_RIGHT]:
-                xcoor = speed
+                if key[pygame.K_RIGHT]:
+                    xcoor = speed
+                    self.running = True
+                if key[pygame.K_UP] and self.jumppossibility is False:
+                    self.yspeed = -30
+                    self.jumppossibility = True
+                if key[pygame.K_l] or key[pygame.K_k]:
+                    self.attack(surface, target)
+                    if key[pygame.K_l]:
+                        self.attackoption = 1
+                    if key[pygame.K_k]:
+                        self.attackoption = 2
+            if self.player == 2:
+                if key[pygame.K_a]:
+                    xcoor = -speed
                 self.running = True
-            if key[pygame.K_UP] and self.jumppossibility is False:
-                self.yspeed = -30
-                self.jumppossibility = True
-            if key[pygame.K_l] or key[pygame.K_k]:
-                self.attack(surface, target)
-                if key[pygame.K_l]:
-                    self.attackoption = 1
-                if key[pygame.K_k]:
-                    self.attackoption = 2
+                if key[pygame.K_d]:
+                    xcoor = speed
+                    self.running = True
+                if key[pygame.K_w] and self.jumppossibility is False:
+                    self.yspeed = -30
+                    self.jumppossibility = True
+                if key[pygame.K_r] or key[pygame.K_t]:
+                    self.attack(surface, target)
+                    if key[pygame.K_r]:
+                        self.attackoption = 1
+                    if key[pygame.K_t]:
+                        self.attackoption = 2
 
         self.yspeed += grav
         ycoor += self.yspeed
@@ -103,6 +131,10 @@ class Fighter():
             self.flip = False
         else:
             self.flip = True
+
+        if self.attackingcooldown > 0:
+            self.attackingcooldown -= 1
+
 
         self.rect.x += xcoor
         self.rect.y += ycoor
