@@ -7,7 +7,7 @@ screen_width = 1000
 screen_height = 600
 
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Level2')
+pygame.display.set_caption('Level')
 
 clock = pygame.time.Clock()
 
@@ -18,23 +18,28 @@ gameover = False
 gameovercooldown = 2000
 
 
-codysize = 110
-codyscale = 2
-codyoffset = [35, -15]
+codysize = 100
+codyscale = 3.5
+codyoffset = [35, 15]
 codydata = [codysize, codyscale, codyoffset]
 shadowsize = 95
 shadowscale = 2
 shadowoffset = [20, -3]
 shadowdata = [shadowsize, shadowscale, shadowoffset]
 
+pygame.mixer.music.load('music.mp3')
+pygame.mixer.music.set_volume(0.2)
+pygame.mixer.music.play(-1, 0.0, 5000)
+
 
 background = pygame.image.load('background.jpg').convert_alpha()
 cody_sheet = pygame.image.load('codymain.png').convert_alpha()
-shadow_sheet = pygame.image.load('shadowmain.png').convert_alpha()
+shadow_sheet = pygame.image.load('codymain.png').convert_alpha()
+#shadow_sheet = pygame.image.load('shadowmain.png').convert_alpha()
 victorypicture = pygame.image.load('victory.png').convert_alpha()
 
-codysteps = [3, 3, 3, 2]
-shadowsteps = [3, 3, 2, 3]
+codysteps = [3, 2, 3, 3, 2]
+shadowsteps = [3, 2, 3, 3, 2]
 def drawing_background():
     scaled_background = pygame.transform.scale(background, (screen_width, screen_height))
     screen.blit(scaled_background, (0, 0))
