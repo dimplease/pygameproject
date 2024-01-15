@@ -1,5 +1,5 @@
 import pygame
-from fighter import Fighter
+from main import Fighter
 
 #создание окна игры
 pygame.init()
@@ -18,30 +18,29 @@ gameover = False
 gameovercooldown = 2000
 
 #определите переменные истребителя
-codysize = 100
-codyscale = 3.5
-codyoffset = [35, 15]
+codysize = 60
+codyscale = 5
+codyoffset = [35, 10]
 codydata = [codysize, codyscale, codyoffset]
-shadowsize = 95
-shadowscale = 2
-shadowoffset = [20, -3]
+shadowsize = 70
+shadowscale = 3.5
+shadowoffset = [20, 5]
 shadowdata = [shadowsize, shadowscale, shadowoffset]
 
 #загрузка музыки
-pygame.mixer.music.load('music.mp3')
+pygame.mixer.music.load('sergey.mp3')
 pygame.mixer.music.set_volume(0.2)
 pygame.mixer.music.play(-1, 0.0, 5000)
 
 #загрузка фона игры
 background = pygame.image.load('background.jpg').convert_alpha()
 #загружать таблицы спрайтов
-cody_sheet = pygame.image.load('codymain.png').convert_alpha()
-shadow_sheet = pygame.image.load('codymain.png').convert_alpha()
-shadow_sheet = pygame.image.load('shadowmain.png').convert_alpha()
+cody_sheet = pygame.image.load('codymain2.png').convert_alpha()
+shadow_sheet = pygame.image.load('shadowmain2.png').convert_alpha()
 victorypicture = pygame.image.load('victory.png').convert_alpha()
 #определение количества шагов в анимации
-codysteps = [3, 2, 3, 3, 2]
-shadowsteps = [3, 2, 3, 3, 2]
+codysteps = [6, 4, 3, 6, 1]
+shadowsteps = [3, 3, 3, 5, 1]
 
 
 #функция рисования фона
