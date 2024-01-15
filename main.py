@@ -1,5 +1,6 @@
 import pygame
 
+
 class Fighter():
     def __init__(self, player, x, y, flip, data, sprite, steps):
         self.player = player
@@ -7,7 +8,7 @@ class Fighter():
         self.imagescale = data[1]
         self.offset = data[2]
         self.animationlist = self.images(sprite, steps)
-        self.action = 0
+        self.action = 0 #0:на месте #1:бег #2:прыжок #3:атака #4:смерть
         self.frame = 0
         self.update = pygame.time.get_ticks()
         self.image = self.animationlist[self.action][self.frame]
@@ -23,6 +24,7 @@ class Fighter():
         self.alive = True
 
     def images(self, sprite, steps):
+        #извлечение изображения из таблицы спрайтов
         animationlist = []
         for y, animation in enumerate(steps):
             temp_img = []
@@ -43,6 +45,7 @@ class Fighter():
             if attackingrect.colliderect(target.rect):
                 target.xp -= 10
 
+    #обрабатывать обновления анимации
     def updating(self):
         if self.xp <= 0:
             self.xp = 0
@@ -70,10 +73,6 @@ class Fighter():
             self.attacking = False
             self.attackingcooldown = 20
 
-
-
-
-
     def moving(self, surface, target, gameover):
         speed = 8
         xcoor = 0
@@ -81,8 +80,9 @@ class Fighter():
         grav = 2
         self.running = False
         self.attackingtype = 0
+        #получать нажатия клавиш
         key = pygame.key.get_pressed()
-
+        #выполнение других действий 
         if self.attacking is False and self.alive is True and gameover is False:
             if self.player == 1:
                 if key[pygame.K_LEFT]:
@@ -110,10 +110,12 @@ class Fighter():
                 if key[pygame.K_r]:
                     self.attack(target)
                     self.action = 3
-
+                    
+        #применение гравитации
         self.yspeed += grav
         ycoor += self.yspeed
-
+        
+        #игрок остается на экране
         if self.rect.left + xcoor < 0:
             xcoor = -self.rect.left
         if self.rect.right + xcoor > 1000:
@@ -122,7 +124,8 @@ class Fighter():
             self.yspeed = 0
             self.jumppossibility = False
             ycoor = 490 - self.rect.bottom
-
+            
+        #убедиться, что игроки смотрят друг на друга
         if target.rect.centerx > self.rect.centerx:
             self.flip = False
         else:
@@ -131,7 +134,7 @@ class Fighter():
         if self.attackingcooldown > 0:
             self.attackingcooldown -= 1
 
-
+        #обновления позиции игрока
         self.rect.x += xcoor
         self.rect.y += ycoor
 
@@ -140,5 +143,3 @@ class Fighter():
             self.action = newaction
             self.frame = 0
             self.update = pygame.time.get_ticks()
-
-
